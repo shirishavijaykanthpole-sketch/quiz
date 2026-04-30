@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stranger Things | Jury Final Submission</title>
+    <!-- External Library: Hammer.js for touch gestures like swiping used in the Memory Vault -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <style>
+        :root {
+            --st-red: #e7000b;
+            --st-dark: #0a0a0a;
+            --liquid-red: #ff2e00;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background-color: #000; 
+            color: #fff; 
+            font-family: 'Inter', sans-serif; 
+            overflow-x: hidden; 
+        }
+
+        .section-title { 
+            text-align: center; color: var(--st-red); font-size: 3.5rem; 
+            padding: 100px 0 30px; font-family: 'Georgia', serif; 
+            letter-spacing: 8px; text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(231,0,11,0.6);
+        }
+
+        /* --- 1. HERO SECTION --- */
+        /* Implements a parallax-ready background with a linear gradient overlay for logo legibility */
+        .hero {
+            height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), #000), url('image-10.png') center/cover;
+            position: relative;
+        }
+        .main-logo { width: 550px; filter: drop-shadow(0 0 20px var(--st-red)); animation: float 3s ease-in-out infinite; }
+        
+        /* Keyframe animation for a hovering supernatural effect */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        /* Liquid Button: Uses a hidden 'liquid' div and rotating pseudo-elements to create a fluid fill effect on hover */
+        .liquid-button {
+            margin-top: 50px; position: relative; width: 220px; height: 70px;
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; overflow: hidden; border-radius: 12px;
+            border: 2px solid var(--st-red); background: #000; z-index: 100;
+        }
+        .liquid-button span { font: 700 20px "Inter", sans-serif; color: #fff; text-transform: uppercase; z-index: 2; letter-spacing: 2px; }
+        .liquid-button .liquid {
+            position: absolute; top: -60px; left: 0; width: 100%; height: 200px;
+            background: var(--st-red); z-index: 1; transition: 0.6s;
+        }
+        .liquid-button .liquid::after {
+            content: ""; position: absolute; width: 200%; height: 200%; top: 0; left: 0;
+            transform: translate(-25%, -75%); border-radius: 45%; background: #000;
+            animation: liquidMove 5s linear infinite;
+        }
+        @keyframes liquidMove { 0% { transform: translate(-25%, -75%) rotate(0); } 100% { transform: translate(-25%, -75%) rotate(360deg); } }
+        .liquid-button:hover .liquid { top: -120px; }
+
+        /* --- 2. THE HEROES (PARTY) --- */
+        /* Dynamic Flexbox row where cards expand smoothly on hover via cubic-bezier transition */
+        .heroes-row { display: flex; justify-content: center; gap: 15px; padding: 0 50px; height: 450px; }
+        .hero-card {
+            flex: 1; max-width: 180px; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative; overflow: hidden; border-radius: 20px; border: 1px solid #222;
+        }
+        .hero-card:hover { flex: 4; max-width: 500px; border-color: var(--st-red); box-shadow: 0 0 40px rgba(231,0,11,0.5); }
+        .hero-card img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: 0.6s; }
+        .hero-card:hover img { filter: grayscale(0); transform: scale(1.05); }
+        .hero-card .info { 
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px;
+            background: linear-gradient(to top, #000, transparent);
+            transform: translateY(100px); transition: 0.5s; opacity: 0;
+        }
+        .hero-card:hover .info { transform: translateY(0); opacity: 1; }
+
+        /* --- 3. SCRATCH REVEAL --- */
+        /* Uses Canvas GlobalCompositeOperation 'destination-out' to erase a grey overlay with mouse movement */
+        .scratch-section { display: flex; flex-direction: column; align-items: center; background: #050505; }
+        .scratch-box { position: relative; width: 80%; max-width: 800px; height: 300px; background: #111; border: 3px solid #222; }
+        .scratch-content { 
+            position: absolute; inset: 0; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; text-align: center; padding: 40px;
+        }
+        .scratch-canvas { position: absolute; top: 0; left: 0; cursor: crosshair; z-index: 5; }
+
+        /* --- 4. RUSSIAN CODE GLITCH --- */
+        .code-section { height: 40vh; display: flex; justify-content: center; align-items: center; background: #000; }
+        .glitch-text { font-size: 3.5rem; font-weight: 800; color: #fff; cursor: help; position: relative; }
+        .glitch-text::before { content: "НЕДЕЛЯ ДЛИННАЯ"; position: absolute; left: 0; color: var(--st-red); transition: 0.3s; }
+        .glitch-text:hover::before { opacity: 0; }
+        .glitch-text span { opacity: 0; transition: 0.3s; }
+        .glitch-text:hover span { opacity: 1; }
+
+        /* --- 5. VECNA CLOCK & SHAKE --- */
+        .clock-section {
+            height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: radial-gradient(circle, #2a0405 0%, #000 80%);
+        }
+        #clock { width: 250px; height: 250px; border: 8px solid #333; border-radius: 50%; position: relative; }
+        #clock::after { 
+            content: ""; position: absolute; width: 4px; height: 100px; 
+            background: var(--st-red); left: 50%; bottom: 50%; 
+            transform-origin: bottom; animation: rotateClock 60s linear infinite; 
+        }
+        @keyframes rotateClock { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
+        /* Shake trigger to simulate Vecna's presence on hover */
+        .shake-trigger:hover { animation: screenShake 0.2s infinite; }
+        @keyframes screenShake { 
+            0% { transform: translate(1px, 1px); } 20% { transform: translate(-3px, 0px); }
+            40% { transform: translate(3px, 2px); } 100% { transform: translate(1px, -2px); }
+        }
+
+        /* --- 6. MEMORY VAULT (SWIPE GESTURE) --- */
+        .vault-section {
+            height: 90vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #000; position: relative; overflow: hidden;
+        }
+        .vault-container { position: relative; width: 400px; height: 500px; }
+        .vault-card {
+            position: absolute; width: 100%; height: 100%; background: #111;
+            border: 2px solid var(--st-red); border-radius: 20px; overflow: hidden;
+            display: flex; flex-direction: column; cursor: grab; user-select: none;
+            transition: transform 0.5s ease-out, opacity 0.5s;
+        }
+        .vault-card img { width: 100%; height: 60%; object-fit: cover; pointer-events: none; }
+        .vault-card .card-content { padding: 20px; pointer-events: none; }
+        .vault-card h3 { color: var(--st-red); margin-bottom: 10px; font-family: 'Georgia', serif; }
+        .vault-card p { font-size: 14px; line-height: 1.4; color: #ccc; }
+
+        /* --- 7. FOOTER --- */
+        .footer { padding: 60px; text-align: center; color: #444; border-top: 1px solid #111; }
+        #particle-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1; }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- HERO SECTION: Entry point for the quiz -->
+    <section class="hero">
+        <img src="image-20.png" class="main-logo">
+        <a href="2ndpage.html" class="liquid-button">
+            <span>START QUIZ</span>
+            <div class="liquid"></div>
+        </a>
+    </section>
+
+    <!-- THE PARTY SECTION: Expanding card gallery using your requested high-res links -->
+    <h2 class="section-title">The Party</h2>
+    <section class="heroes-row">
+        <!-- Eleven: The Mage -->
+        <div class="hero-card">
+            <img src="https://images2.alphacoders.com/124/thumb-1920-1245187.jpg">
+            <div class="info"><h2>011</h2><p>"Friends don't lie."</p></div>
+        </div>
+        <!-- Mike: The Paladin -->
+        <div class="hero-card">
+            <img src="https://images5.alphacoders.com/900/thumb-1920-900841.jpg">
+            <div class="info"><h2>Mike</h2><p>"I never gave up on you."</p></div>
+        </div>
+        <!-- Dustin: The Bard -->
+        <div class="hero-card">
+            <img src="https://www.tvinsider.com/wp-content/uploads/2025/12/stranger-things-season-5-gaten-matarazzo-1420x798.jpg">
+            <div class="info"><h2>Dustin</h2><p>"Curiosity voyage!"</p></div>
+        </div>
+        <!-- Lucas: The Ranger -->
+        <div class="hero-card">
+            <img src="https://i.pinimg.com/736x/f2/43/24/f2432480a2496cdae43e869219b1e301.jpg">
+            <div class="info"><h2>Lucas</h2><p>"Stay on the channel."</p></div>
+        </div>
+        <!-- Will: The Cleric -->
+        <div class="hero-card">
+            <img src="https://compote.slate.com/images/60083453-1a30-4f8e-9fba-b972c93afae7.jpeg?crop=1560%2C1040%2Cx0%2Cy0">
+            <div class="info"><h2>Will</h2><p>"He's here."</p></div>
+        </div>
+    </section>
+
+    <!-- SCRATCH SECTION: Interactive reveal mechanism -->
+    <section class="scratch-section">
+        <h2 class="section-title">Wipe the Mist</h2>
+        <div class="scratch-box">
+            <div class="scratch-content">
+                <h1 style="color:var(--st-red)">VECNA'S TRUTH</h1>
+                <p style="font-size: 1.5rem; max-width: 600px;">"You have multiple dark secrets. I can see them all."</p>
+            </div>
+            <canvas class="scratch-canvas" id="scratchCanvas"></canvas>
+        </div>
+    </section>
+
+    <!-- GLITCH SECTION: CSS transition based decoding effect -->
+    <h2 class="section-title">Decode the Signal</h2>
+    <section class="code-section">
+        <div class="glitch-text">
+            <span>THE WEEK IS LONG</span>
+        </div>
+    </section>
+
+    <!-- CLOCK SECTION: Visual and haptic simulation of the 'curse' -->
+    <section class="clock-section shake-trigger">
+        <div id="clock"></div>
+        <h2 style="margin-top: 40px; color: var(--st-red);">DO YOU HEAR THAT?</h2>
+        <p style="color: #444;">Hover to feel the curse...</p>
+    </section>
+
+    <!-- MEMORY VAULT: Swipeable card stack using Hammer.js -->
+    <h2 class="section-title">Memory Vault</h2>
+    <p style="text-align: center; color: #555; margin-bottom: 20px;">Long press and swipe left/right</p>
+    <section class="vault-section">
+        <div class="vault-container" id="vault">
+            <div class="vault-card">
+                <img src="https://rossonl.wordpress.com/wp-content/uploads/2019/07/4d145.jpg?w=1303&h=642">
+                <div class="card-content">
+                    <h3>Running Up The Hill</h3>
+                    <p>Season 4: Max reading her letter by Billy's grave and escaping Vecna's nightmare through music.</p>
+                </div>
+            </div>
+            <div class="vault-card">
+                <img src="https://rossonl.wordpress.com/wp-content/uploads/2017/10/mike-el1.jpg?w=640">
+                <div class="card-content">
+                    <h3>The Snow Ball</h3>
+                    <p>Season 2: The kids find pure happiness on the dance floor after a season of estrangement.</p>
+                </div>
+            </div>
+            <div class="vault-card">
+                <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2019/07/Stranger-Things-Season-3-Finale-Moving.jpg">
+                <div class="card-content">
+                    <h3>Sailing West</h3>
+                    <p>Season 3: Hopper's letter to Eleven delivers an emotional punch as the friends tearfully part ways.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>STRANGER THINGS FAN EXPERIENCE | JURY SUBMISSION 2026</p>
+    </footer>
+
+    <script>
+        // --- SCRATCH REVEAL SCRIPT ---
+        const sCanvas = document.getElementById('scratchCanvas');
+        const sCtx = sCanvas.getContext('2d');
+        function initScratch() {
+            sCanvas.width = sCanvas.parentElement.offsetWidth;
+            sCanvas.height = sCanvas.parentElement.offsetHeight;
+            sCtx.fillStyle = '#1a1a1a';
+            sCtx.fillRect(0, 0, sCanvas.width, sCanvas.height);
+            sCtx.font = "bold 25px Arial"; sCtx.fillStyle = "#333"; sCtx.textAlign = "center";
+            sCtx.fillText("SCRATCH TO REVEAL SECRETS", sCanvas.width/2, sCanvas.height/2);
+        }
+        initScratch();
+        sCanvas.addEventListener('mousemove', (e) => {
+            const rect = sCanvas.getBoundingClientRect();
+            sCtx.globalCompositeOperation = 'destination-out';
+            sCtx.beginPath();
+            sCtx.arc(e.clientX - rect.left, e.clientY - rect.top, 40, 0, Math.PI * 2);
+            sCtx.fill();
+        });
+
+        // --- HAMMER.JS SWIPE SCRIPT ---
+        const cards = document.querySelectorAll('.vault-card');
+        cards.forEach((el) => {
+            const hammer = new Hammer(el);
+            hammer.on('pan', (ev) => {
+                el.style.transform = `translate(${ev.deltaX}px, ${ev.deltaY}px) rotate(${ev.deltaX * 0.05}deg)`;
+            });
+            hammer.on('panend', (ev) => {
+                if (Math.abs(ev.deltaX) < 150) {
+                    el.style.transform = '';
+                } else {
+                    el.style.transform = `translate(${ev.deltaX > 0 ? 1000 : -1000}px, ${ev.deltaY}px) rotate(${ev.deltaX * 0.2}deg)`;
+                    el.style.opacity = '0';
+                    setTimeout(() => el.remove(), 500);
+                }
+            });
+        });
+
+        // --- BACKGROUND PARTICLES SCRIPT ---
+        const pCanvas = document.getElementById('particle-canvas');
+        const pCtx = pCanvas.getContext('2d');
+        let particles = [];
+        pCanvas.width = window.innerWidth;
+        pCanvas.height = window.innerHeight;
+        class Particle {
+            constructor() {
+                this.x = Math.random() * pCanvas.width;
+                this.y = Math.random() * pCanvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+            }
+            update() { this.x += this.speedX; this.y += this.speedY; }
+            draw() { pCtx.fillStyle = 'rgba(255,255,255,0.1)'; pCtx.beginPath(); pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); pCtx.fill(); }
+        }
+        for (let i = 0; i < 100; i++) particles.push(new Particle());
+        function animate() {
+            pCtx.clearRect(0,0, pCanvas.width, pCanvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+        window.addEventListener('resize', () => { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; initScratch(); });
+    </script>
+</body>
+</html>
