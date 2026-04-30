@@ -4,7 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Stranger Things | Jury Final Submission</title>
+    
+    <!-- Microsoft Clarity Heatmap Code -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "wjo0kbw464");
+    </script>
+
+    <!-- External Library: Hammer.js for touch gestures -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    
     <style>
         :root {
             --st-red: #e7000b;
@@ -23,17 +35,27 @@
             text-shadow: 0 0 15px rgba(231,0,11,0.6);
         }
 
-        /* --- 1. HERO SECTION & ORIGINAL LIQUID BUTTON --- */
+        /* --- 1. HERO SECTION (FIXED RESPONSIVENESS) --- */
         .hero {
             height: 100vh; display: flex; flex-direction: column;
             justify-content: center; align-items: center;
             background: linear-gradient(to bottom, rgba(0,0,0,0.3), #000), url('image-10.png') center/cover;
             position: relative; padding: 20px;
+            text-align: center;
         }
-        .main-logo { width: 90%; max-width: 550px; filter: drop-shadow(0 0 20px var(--st-red)); animation: float 3s ease-in-out infinite; }
+
+        /* Responsive Logo Scaling */
+        .main-logo { 
+            width: 100%; 
+            max-width: 550px; /* Original size for laptop */
+            height: auto;
+            filter: drop-shadow(0 0 20px var(--st-red)); 
+            animation: float 3s ease-in-out infinite; 
+        }
+
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
-        /* Restored Original Liquid Button Styling */
+        /* Liquid Button Styling */
         .liquid-button {
             margin-top: 50px; position: relative; width: 220px; height: 70px;
             display: flex; align-items: center; justify-content: center;
@@ -54,6 +76,13 @@
         .liquid-button .liquid::before { border-radius: 40%; background: rgba(26, 26, 26, 0.5); animation: animateLiquid 7s linear infinite; }
         @keyframes animateLiquid { 0% { transform: translate(-25%, -75%) rotate(0); } 100% { transform: translate(-25%, -75%) rotate(360deg); } }
         .liquid-button:hover .liquid { top: -120px; }
+
+        /* Mobile specific adjustments for Hero */
+        @media (max-width: 600px) {
+            .main-logo { max-width: 85%; }
+            .liquid-button { width: 180px; height: 60px; margin-top: 30px; }
+            .liquid-button span { font-size: 16px; }
+        }
 
         /* --- 2. THE HEROES (PARTY) --- */
         .heroes-row { display: flex; flex-wrap: nowrap; justify-content: center; gap: 10px; padding: 0 20px; height: 450px; width: 100%; max-width: 1200px; margin: 0 auto; }
@@ -76,7 +105,7 @@
             .hero-card { flex: none; width: 45%; height: 250px; max-width: 100%; }
         }
 
-        /* --- 3. SCRATCH REVEAL (Finger/Touch Support) --- */
+        /* --- 3. SCRATCH REVEAL --- */
         .scratch-section { display: flex; flex-direction: column; align-items: center; background: #050505; }
         .scratch-box { position: relative; width: 90%; max-width: 800px; height: 300px; background: #111; border: 3px solid #222; touch-action: none; }
         .scratch-content { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
@@ -98,7 +127,7 @@
         .shake-trigger:hover { animation: screenShake 0.2s infinite; }
         @keyframes screenShake { 0% { transform: translate(1px, 1px); } 20% { transform: translate(-3px, 0px); } 100% { transform: translate(1px, -2px); } }
 
-        /* --- 6. MEMORY VAULT (STACKED SWIPING) --- */
+        /* --- 6. MEMORY VAULT --- */
         .vault-section { height: 90vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; position: relative; overflow: hidden; }
         .vault-container { position: relative; width: 300px; height: 450px; }
         .vault-card {
@@ -180,7 +209,7 @@
     <footer class="footer"><p>STRANGER THINGS FAN EXPERIENCE | JURY SUBMISSION 2026</p></footer>
 
     <script>
-        // --- SCRATCH SCRIPT (Restored Finger Support) ---
+        // --- SCRATCH SCRIPT ---
         const sCanvas = document.getElementById('scratchCanvas');
         const sCtx = sCanvas.getContext('2d');
         const sBox = document.getElementById('scratchBox');
@@ -197,10 +226,10 @@
         sCanvas.addEventListener('mousemove', (e) => { if(e.buttons === 1){ const rect = sCanvas.getBoundingClientRect(); doScratch(e.clientX - rect.left, e.clientY - rect.top); } });
         sCanvas.addEventListener('touchmove', (e) => { e.preventDefault(); const touch = e.touches[0]; const rect = sCanvas.getBoundingClientRect(); doScratch(touch.clientX - rect.left, touch.clientY - rect.top); }, {passive: false});
 
-        // --- VAULT SWIPING (Fixed Improper Handling) ---
+        // --- VAULT SWIPING ---
         const cards = document.querySelectorAll('.vault-card');
         cards.forEach((el, index) => {
-            el.style.zIndex = cards.length - index; // Ensure top card is first
+            el.style.zIndex = cards.length - index;
             const hammer = new Hammer(el);
             hammer.on('pan', (ev) => {
                 el.style.transition = 'none';
