@@ -2,69 +2,61 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Stranger Things | Jury Final Submission</title>
-    <!-- External Library: Hammer.js for touch gestures like swiping used in the Memory Vault -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
     <style>
         :root {
             --st-red: #e7000b;
             --st-dark: #0a0a0a;
-            --liquid-red: #ff2e00;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            background-color: #000; 
-            color: #fff; 
-            font-family: 'Inter', sans-serif; 
-            overflow-x: hidden; 
-        }
+        /* --- GLOBAL RESET & RESPONSIVENESS --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; }
+        body { background-color: #000; color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
 
         .section-title { 
-            text-align: center; color: var(--st-red); font-size: 3.5rem; 
-            padding: 100px 0 30px; font-family: 'Georgia', serif; 
-            letter-spacing: 8px; text-transform: uppercase;
+            text-align: center; color: var(--st-red); 
+            font-size: clamp(2rem, 8vw, 3.5rem); 
+            padding: 80px 10px 30px; font-family: 'Georgia', serif; 
+            letter-spacing: 6px; text-transform: uppercase;
             text-shadow: 0 0 15px rgba(231,0,11,0.6);
         }
 
-        /* --- 1. HERO SECTION --- */
-        /* Implements a parallax-ready background with a linear gradient overlay for logo legibility */
+        /* --- 1. HERO SECTION & ORIGINAL LIQUID BUTTON --- */
         .hero {
             height: 100vh; display: flex; flex-direction: column;
             justify-content: center; align-items: center;
             background: linear-gradient(to bottom, rgba(0,0,0,0.3), #000), url('image-10.png') center/cover;
-            position: relative;
+            position: relative; padding: 20px;
         }
-        .main-logo { width: 550px; filter: drop-shadow(0 0 20px var(--st-red)); animation: float 3s ease-in-out infinite; }
-        
-        /* Keyframe animation for a hovering supernatural effect */
+        .main-logo { width: 90%; max-width: 550px; filter: drop-shadow(0 0 20px var(--st-red)); animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
-        /* Liquid Button: Uses a hidden 'liquid' div and rotating pseudo-elements to create a fluid fill effect on hover */
+        /* Restored Original Liquid Button Styling */
         .liquid-button {
             margin-top: 50px; position: relative; width: 220px; height: 70px;
             display: flex; align-items: center; justify-content: center;
-            text-decoration: none; overflow: hidden; border-radius: 12px;
+            text-decoration: none; overflow: hidden; border-radius: 10px;
             border: 2px solid var(--st-red); background: #000; z-index: 100;
+            box-shadow: 0px 0px 20px 0px rgba(220, 38, 38, 0.5);
         }
-        .liquid-button span { font: 700 20px "Inter", sans-serif; color: #fff; text-transform: uppercase; z-index: 2; letter-spacing: 2px; }
+        .liquid-button span { font: 700 18px "Inter", sans-serif; color: #fff; text-transform: uppercase; z-index: 10; letter-spacing: 2px; }
         .liquid-button .liquid {
             position: absolute; top: -60px; left: 0; width: 100%; height: 200px;
-            background: var(--st-red); z-index: 1; transition: 0.6s;
+            background: var(--st-red); box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.7);
+            z-index: 1; transition: 0.6s;
         }
-        .liquid-button .liquid::after {
-            content: ""; position: absolute; width: 200%; height: 200%; top: 0; left: 0;
-            transform: translate(-25%, -75%); border-radius: 45%; background: #000;
-            animation: liquidMove 5s linear infinite;
+        .liquid-button .liquid::after, .liquid-button .liquid::before {
+            position: absolute; content: ""; width: 200%; height: 200%; top: 0; left: 0; transform: translate(-25%, -75%);
         }
-        @keyframes liquidMove { 0% { transform: translate(-25%, -75%) rotate(0); } 100% { transform: translate(-25%, -75%) rotate(360deg); } }
+        .liquid-button .liquid::after { border-radius: 45%; background: rgba(20, 20, 20, 1); animation: animateLiquid 5s linear infinite; }
+        .liquid-button .liquid::before { border-radius: 40%; background: rgba(26, 26, 26, 0.5); animation: animateLiquid 7s linear infinite; }
+        @keyframes animateLiquid { 0% { transform: translate(-25%, -75%) rotate(0); } 100% { transform: translate(-25%, -75%) rotate(360deg); } }
         .liquid-button:hover .liquid { top: -120px; }
 
         /* --- 2. THE HEROES (PARTY) --- */
-        /* Dynamic Flexbox row where cards expand smoothly on hover via cubic-bezier transition */
-        .heroes-row { display: flex; justify-content: center; gap: 15px; padding: 0 50px; height: 450px; }
+        .heroes-row { display: flex; flex-wrap: nowrap; justify-content: center; gap: 10px; padding: 0 20px; height: 450px; width: 100%; max-width: 1200px; margin: 0 auto; }
         .hero-card {
             flex: 1; max-width: 180px; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             position: relative; overflow: hidden; border-radius: 20px; border: 1px solid #222;
@@ -73,56 +65,42 @@
         .hero-card img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: 0.6s; }
         .hero-card:hover img { filter: grayscale(0); transform: scale(1.05); }
         .hero-card .info { 
-            position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px;
-            background: linear-gradient(to top, #000, transparent);
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 25px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
             transform: translateY(100px); transition: 0.5s; opacity: 0;
         }
         .hero-card:hover .info { transform: translateY(0); opacity: 1; }
 
-        /* --- 3. SCRATCH REVEAL --- */
-        /* Uses Canvas GlobalCompositeOperation 'destination-out' to erase a grey overlay with mouse movement */
-        .scratch-section { display: flex; flex-direction: column; align-items: center; background: #050505; }
-        .scratch-box { position: relative; width: 80%; max-width: 800px; height: 300px; background: #111; border: 3px solid #222; }
-        .scratch-content { 
-            position: absolute; inset: 0; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; text-align: center; padding: 40px;
+        @media (max-width: 768px) {
+            .heroes-row { flex-wrap: wrap; height: auto; }
+            .hero-card { flex: none; width: 45%; height: 250px; max-width: 100%; }
         }
+
+        /* --- 3. SCRATCH REVEAL (Finger/Touch Support) --- */
+        .scratch-section { display: flex; flex-direction: column; align-items: center; background: #050505; }
+        .scratch-box { position: relative; width: 90%; max-width: 800px; height: 300px; background: #111; border: 3px solid #222; touch-action: none; }
+        .scratch-content { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .scratch-canvas { position: absolute; top: 0; left: 0; cursor: crosshair; z-index: 5; }
 
         /* --- 4. RUSSIAN CODE GLITCH --- */
         .code-section { height: 40vh; display: flex; justify-content: center; align-items: center; background: #000; }
-        .glitch-text { font-size: 3.5rem; font-weight: 800; color: #fff; cursor: help; position: relative; }
+        .glitch-text { font-size: clamp(1.5rem, 6vw, 3.5rem); font-weight: 800; color: #fff; cursor: help; position: relative; }
         .glitch-text::before { content: "НЕДЕЛЯ ДЛИННАЯ"; position: absolute; left: 0; color: var(--st-red); transition: 0.3s; }
         .glitch-text:hover::before { opacity: 0; }
         .glitch-text span { opacity: 0; transition: 0.3s; }
         .glitch-text:hover span { opacity: 1; }
 
         /* --- 5. VECNA CLOCK & SHAKE --- */
-        .clock-section {
-            height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: radial-gradient(circle, #2a0405 0%, #000 80%);
-        }
-        #clock { width: 250px; height: 250px; border: 8px solid #333; border-radius: 50%; position: relative; }
-        #clock::after { 
-            content: ""; position: absolute; width: 4px; height: 100px; 
-            background: var(--st-red); left: 50%; bottom: 50%; 
-            transform-origin: bottom; animation: rotateClock 60s linear infinite; 
-        }
+        .clock-section { padding: 80px 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle, #2a0405 0%, #000 80%); }
+        #clock { width: clamp(150px, 40vw, 250px); height: clamp(150px, 40vw, 250px); border: 8px solid #333; border-radius: 50%; position: relative; }
+        #clock::after { content: ""; position: absolute; width: 4px; height: 40%; background: var(--st-red); left: 50%; bottom: 50%; transform-origin: bottom; animation: rotateClock 60s linear infinite; }
         @keyframes rotateClock { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        
-        /* Shake trigger to simulate Vecna's presence on hover */
         .shake-trigger:hover { animation: screenShake 0.2s infinite; }
-        @keyframes screenShake { 
-            0% { transform: translate(1px, 1px); } 20% { transform: translate(-3px, 0px); }
-            40% { transform: translate(3px, 2px); } 100% { transform: translate(1px, -2px); }
-        }
+        @keyframes screenShake { 0% { transform: translate(1px, 1px); } 20% { transform: translate(-3px, 0px); } 100% { transform: translate(1px, -2px); } }
 
-        /* --- 6. MEMORY VAULT (SWIPE GESTURE) --- */
-        .vault-section {
-            height: 90vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: #000; position: relative; overflow: hidden;
-        }
-        .vault-container { position: relative; width: 400px; height: 500px; }
+        /* --- 6. MEMORY VAULT (STACKED SWIPING) --- */
+        .vault-section { height: 90vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; position: relative; overflow: hidden; }
+        .vault-container { position: relative; width: 300px; height: 450px; }
         .vault-card {
             position: absolute; width: 100%; height: 100%; background: #111;
             border: 2px solid var(--st-red); border-radius: 20px; overflow: hidden;
@@ -131,14 +109,14 @@
         }
         .vault-card img { width: 100%; height: 60%; object-fit: cover; pointer-events: none; }
         .vault-card .card-content { padding: 20px; pointer-events: none; }
-        .vault-card h3 { color: var(--st-red); margin-bottom: 10px; font-family: 'Georgia', serif; }
-        .vault-card p { font-size: 14px; line-height: 1.4; color: #ccc; }
+        .vault-card h3 { color: var(--st-red); font-size: 1.2rem; margin-bottom: 8px; font-family: 'Georgia', serif; }
+        .vault-card p { font-size: 13px; line-height: 1.4; color: #ccc; }
 
         /* --- 7. FOOTER --- */
-        .footer { padding: 60px; text-align: center; color: #444; border-top: 1px solid #111; }
+        .footer { padding: 60px 20px; text-align: center; color: #444; font-size: 12px; border-top: 1px solid #111; }
         #particle-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1; }
-
     </style>
+
     <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -151,7 +129,7 @@
 
     <canvas id="particle-canvas"></canvas>
 
-    <!-- HERO SECTION: Entry point for the quiz -->
+    <!-- SECTION 1: HERO -->
     <section class="hero">
         <img src="image-20.png" class="main-logo">
         <a href="all-in-one.html" class="liquid-button">
@@ -160,160 +138,96 @@
         </a>
     </section>
 
-    <!-- THE PARTY SECTION: Expanding card gallery using your requested high-res links -->
+    <!-- SECTION 2: THE PARTY -->
     <h2 class="section-title">The Party</h2>
     <section class="heroes-row">
-        <!-- Eleven: The Mage -->
-        <div class="hero-card">
-            <img src="https://images2.alphacoders.com/124/thumb-1920-1245187.jpg">
-            <div class="info"><h2>011</h2><p>"Friends don't lie."</p></div>
-        </div>
-        <!-- Mike: The Paladin -->
-        <div class="hero-card">
-            <img src="https://images5.alphacoders.com/900/thumb-1920-900841.jpg">
-            <div class="info"><h2>Mike</h2><p>"I never gave up on you."</p></div>
-        </div>
-        <!-- Dustin: The Bard -->
-        <div class="hero-card">
-            <img src="https://www.tvinsider.com/wp-content/uploads/2025/12/stranger-things-season-5-gaten-matarazzo-1420x798.jpg">
-            <div class="info"><h2>Dustin</h2><p>"Curiosity voyage!"</p></div>
-        </div>
-        <!-- Lucas: The Ranger -->
-        <div class="hero-card">
-            <img src="https://i.pinimg.com/736x/f2/43/24/f2432480a2496cdae43e869219b1e301.jpg">
-            <div class="info"><h2>Lucas</h2><p>"Stay on the channel."</p></div>
-        </div>
-        <!-- Will: The Cleric -->
-        <div class="hero-card">
-            <img src="https://compote.slate.com/images/60083453-1a30-4f8e-9fba-b972c93afae7.jpeg?crop=1560%2C1040%2Cx0%2Cy0">
-            <div class="info"><h2>Will</h2><p>"He's here."</p></div>
-        </div>
+        <div class="hero-card"><img src="https://images2.alphacoders.com/124/thumb-1920-1245187.jpg"><div class="info"><h2>011</h2><p>"Friends don't lie."</p></div></div>
+        <div class="hero-card"><img src="https://images5.alphacoders.com/900/thumb-1920-900841.jpg"><div class="info"><h2>Mike</h2><p>"I never gave up."</p></div></div>
+        <div class="hero-card"><img src="https://www.tvinsider.com/wp-content/uploads/2025/12/stranger-things-season-5-gaten-matarazzo-1420x798.jpg"><div class="info"><h2>Dustin</h2><p>"Curiosity voyage!"</p></div></div>
+        <div class="hero-card"><img src="https://i.pinimg.com/736x/f2/43/24/f2432480a2496cdae43e869219b1e301.jpg"><div class="info"><h2>Lucas</h2><p>"Stay on channel."</p></div></div>
+        <div class="hero-card"><img src="https://compote.slate.com/images/60083453-1a30-4f8e-9fba-b972c93afae7.jpeg?crop=1560%2C1040%2Cx0%2Cy0"><div class="info"><h2>Will</h2><p>"He's here."</p></div></div>
     </section>
 
-    <!-- SCRATCH SECTION: Interactive reveal mechanism -->
+    <!-- SECTION 3: SCRATCH -->
     <section class="scratch-section">
         <h2 class="section-title">Wipe the Mist</h2>
-        <div class="scratch-box">
+        <div class="scratch-box" id="scratchBox">
             <div class="scratch-content">
                 <h1 style="color:var(--st-red)">VECNA'S TRUTH</h1>
-                <p style="font-size: 1.5rem; max-width: 600px;">"You have multiple dark secrets. I can see them all."</p>
+                <p style="font-size: clamp(1rem, 4vw, 1.5rem); max-width: 600px;">"You have multiple dark secrets. I can see them all."</p>
             </div>
             <canvas class="scratch-canvas" id="scratchCanvas"></canvas>
         </div>
     </section>
 
-    <!-- GLITCH SECTION: CSS transition based decoding effect -->
+    <!-- SECTION 4: CODE -->
     <h2 class="section-title">Decode the Signal</h2>
-    <section class="code-section">
-        <div class="glitch-text">
-            <span>THE WEEK IS LONG</span>
-        </div>
-    </section>
+    <section class="code-section"><div class="glitch-text"><span>THE WEEK IS LONG</span></div></section>
 
-    <!-- CLOCK SECTION: Visual and haptic simulation of the 'curse' -->
-    <section class="clock-section shake-trigger">
-        <div id="clock"></div>
-        <h2 style="margin-top: 40px; color: var(--st-red);">DO YOU HEAR THAT?</h2>
-        <p style="color: #444;">Hover to feel the curse...</p>
-    </section>
+    <!-- SECTION 5: CLOCK -->
+    <section class="clock-section shake-trigger"><div id="clock"></div><h2 style="margin-top: 40px; color: var(--st-red);">DO YOU HEAR THAT?</h2></section>
 
-    <!-- MEMORY VAULT: Swipeable card stack using Hammer.js -->
+    <!-- SECTION 6: VAULT -->
     <h2 class="section-title">Memory Vault</h2>
-    <p style="text-align: center; color: #555; margin-bottom: 20px;">Long press and swipe left/right</p>
     <section class="vault-section">
         <div class="vault-container" id="vault">
-            <div class="vault-card">
-                <img src="https://rossonl.wordpress.com/wp-content/uploads/2019/07/4d145.jpg?w=1303&h=642">
-                <div class="card-content">
-                    <h3>Running Up The Hill</h3>
-                    <p>Season 4: Max reading her letter by Billy's grave and escaping Vecna's nightmare through music.</p>
-                </div>
-            </div>
-            <div class="vault-card">
-                <img src="https://rossonl.wordpress.com/wp-content/uploads/2017/10/mike-el1.jpg?w=640">
-                <div class="card-content">
-                    <h3>The Snow Ball</h3>
-                    <p>Season 2: The kids find pure happiness on the dance floor after a season of estrangement.</p>
-                </div>
-            </div>
-            <div class="vault-card">
-                <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2019/07/Stranger-Things-Season-3-Finale-Moving.jpg">
-                <div class="card-content">
-                    <h3>Sailing West</h3>
-                    <p>Season 3: Hopper's letter to Eleven delivers an emotional punch as the friends tearfully part ways.</p>
-                </div>
-            </div>
+            <div class="vault-card"><img src="https://rossonl.wordpress.com/wp-content/uploads/2019/07/4d145.jpg?w=1303&h=642"><div class="card-content"><h3>Running Up The Hill</h3><p>Season 4: Max escapes nightmare.</p></div></div>
+            <div class="vault-card"><img src="https://rossonl.wordpress.com/wp-content/uploads/2017/10/mike-el1.jpg?w=640"><div class="card-content"><h3>The Snow Ball</h3><p>Season 2: Pure happiness.</p></div></div>
+            <div class="vault-card"><img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2019/07/Stranger-Things-Season-3-Finale-Moving.jpg"><div class="card-content"><h3>Sailing West</h3><p>Season 3: Hopper's letter.</p></div></div>
         </div>
     </section>
 
-    <footer class="footer">
-        <p>STRANGER THINGS FAN EXPERIENCE | JURY SUBMISSION 2026</p>
-    </footer>
+    <footer class="footer"><p>STRANGER THINGS FAN EXPERIENCE | JURY SUBMISSION 2026</p></footer>
 
     <script>
-        // --- SCRATCH REVEAL SCRIPT ---
+        // --- SCRATCH SCRIPT (Restored Finger Support) ---
         const sCanvas = document.getElementById('scratchCanvas');
         const sCtx = sCanvas.getContext('2d');
+        const sBox = document.getElementById('scratchBox');
         function initScratch() {
-            sCanvas.width = sCanvas.parentElement.offsetWidth;
-            sCanvas.height = sCanvas.parentElement.offsetHeight;
-            sCtx.fillStyle = '#1a1a1a';
-            sCtx.fillRect(0, 0, sCanvas.width, sCanvas.height);
-            sCtx.font = "bold 25px Arial"; sCtx.fillStyle = "#333"; sCtx.textAlign = "center";
-            sCtx.fillText("SCRATCH TO REVEAL SECRETS", sCanvas.width/2, sCanvas.height/2);
+            sCanvas.width = sBox.offsetWidth; sCanvas.height = sBox.offsetHeight;
+            sCtx.fillStyle = '#1a1a1a'; sCtx.fillRect(0, 0, sCanvas.width, sCanvas.height);
+            sCtx.font = "bold 20px Arial"; sCtx.fillStyle = "#333"; sCtx.textAlign = "center";
+            sCtx.fillText("USE FINGER OR MOUSE TO WIPE", sCanvas.width/2, sCanvas.height/2);
         }
-        initScratch();
-        sCanvas.addEventListener('mousemove', (e) => {
-            const rect = sCanvas.getBoundingClientRect();
+        function doScratch(x, y) {
             sCtx.globalCompositeOperation = 'destination-out';
-            sCtx.beginPath();
-            sCtx.arc(e.clientX - rect.left, e.clientY - rect.top, 40, 0, Math.PI * 2);
-            sCtx.fill();
-        });
+            sCtx.beginPath(); sCtx.arc(x, y, 35, 0, Math.PI * 2); sCtx.fill();
+        }
+        sCanvas.addEventListener('mousemove', (e) => { if(e.buttons === 1){ const rect = sCanvas.getBoundingClientRect(); doScratch(e.clientX - rect.left, e.clientY - rect.top); } });
+        sCanvas.addEventListener('touchmove', (e) => { e.preventDefault(); const touch = e.touches[0]; const rect = sCanvas.getBoundingClientRect(); doScratch(touch.clientX - rect.left, touch.clientY - rect.top); }, {passive: false});
 
-        // --- HAMMER.JS SWIPE SCRIPT ---
+        // --- VAULT SWIPING (Fixed Improper Handling) ---
         const cards = document.querySelectorAll('.vault-card');
-        cards.forEach((el) => {
+        cards.forEach((el, index) => {
+            el.style.zIndex = cards.length - index; // Ensure top card is first
             const hammer = new Hammer(el);
             hammer.on('pan', (ev) => {
+                el.style.transition = 'none';
                 el.style.transform = `translate(${ev.deltaX}px, ${ev.deltaY}px) rotate(${ev.deltaX * 0.05}deg)`;
             });
             hammer.on('panend', (ev) => {
-                if (Math.abs(ev.deltaX) < 150) {
-                    el.style.transform = '';
-                } else {
+                el.style.transition = 'all 0.5s ease-out';
+                if (Math.abs(ev.deltaX) < 120) { el.style.transform = ''; } 
+                else {
                     el.style.transform = `translate(${ev.deltaX > 0 ? 1000 : -1000}px, ${ev.deltaY}px) rotate(${ev.deltaX * 0.2}deg)`;
                     el.style.opacity = '0';
-                    setTimeout(() => el.remove(), 500);
+                    setTimeout(() => el.remove(), 400);
                 }
             });
         });
 
-        // --- BACKGROUND PARTICLES SCRIPT ---
+        // --- PARTICLES ---
         const pCanvas = document.getElementById('particle-canvas');
         const pCtx = pCanvas.getContext('2d');
         let particles = [];
-        pCanvas.width = window.innerWidth;
-        pCanvas.height = window.innerHeight;
-        class Particle {
-            constructor() {
-                this.x = Math.random() * pCanvas.width;
-                this.y = Math.random() * pCanvas.height;
-                this.size = Math.random() * 2;
-                this.speedX = Math.random() * 0.5 - 0.25;
-                this.speedY = Math.random() * 0.5 - 0.25;
-            }
-            update() { this.x += this.speedX; this.y += this.speedY; }
-            draw() { pCtx.fillStyle = 'rgba(255,255,255,0.1)'; pCtx.beginPath(); pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); pCtx.fill(); }
-        }
-        for (let i = 0; i < 100; i++) particles.push(new Particle());
-        function animate() {
-            pCtx.clearRect(0,0, pCanvas.width, pCanvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animate);
-        }
+        pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight;
+        class Particle { constructor() { this.x = Math.random()*pCanvas.width; this.y = Math.random()*pCanvas.height; this.size = Math.random()*1.5; this.speedX = Math.random()*0.4-0.2; this.speedY = Math.random()*0.4-0.2; } update(){ this.x += this.speedX; this.y += this.speedY; } draw(){ pCtx.fillStyle='rgba(255,255,255,0.05)'; pCtx.beginPath(); pCtx.arc(this.x, this.y, this.size, 0, Math.PI*2); pCtx.fill(); }}
+        for(let i=0; i<80; i++) particles.push(new Particle());
+        function animate() { pCtx.clearRect(0,0, pCanvas.width, pCanvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
         animate();
         window.addEventListener('resize', () => { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; initScratch(); });
+        window.onload = initScratch;
     </script>
 </body>
 </html>
